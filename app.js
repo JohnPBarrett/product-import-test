@@ -27,7 +27,14 @@ const writeJSONFile = (products) => {
   });
 };
 
+const importCSVIntoJSON = async (csvFilePath) => {
+  const products = await readCSVFile(csvFilePath);
+
+  return await writeJSONFile(products);
+};
+
 module.exports = {
   readCSVFile,
-  writeJSONFile
+  writeJSONFile,
+  importCSVIntoJSON
 };

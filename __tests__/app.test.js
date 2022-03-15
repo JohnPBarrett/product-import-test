@@ -1,6 +1,5 @@
-const { readCSVFile, writeJSONFile } = require("../app.js");
+const { readCSVFile, writeJSONFile, importCSVIntoJSON } = require("../app.js");
 const fs = require("fs");
-const { expect } = require("@jest/globals");
 
 const productsJSONPath = `${__dirname}/../products.json`;
 
@@ -11,7 +10,7 @@ const readProductsJSON = () => {
 
 afterEach(() => {
   if (fs.existsSync(productsJSONPath)) {
-    // To clear out product.json file so each test is independant from another
+    // To clear out product.json file so each test is independent from another
     fs.unlinkSync(productsJSONPath);
   }
 });
@@ -38,17 +37,19 @@ describe("readCSVFile function", () => {
 });
 
 describe("writeJSONFile function", () => {
-  it("function writes a blank jsonFile when receiving an empty array", async () => {
+  it("function writes a blank JSONFile when receiving an empty array", async () => {
     const array = [];
     const pathToJSON = `${__dirname}/../products.json`;
 
     await writeJSONFile(array);
-    const productData = readProductsJSON();
 
     expect(fs.existsSync(pathToJSON)).toBe(true);
+
+    const productData = readProductsJSON();
+
     expect(productData).toEqual([]);
   });
-  it("function writes a jsonFile when receiving an array with objects", async () => {
+  it("function writes a JSONFile when receiving an array with objects", async () => {
     const array = [
       { SKU: "1", Colour: "C1", Size: "S1" },
       { SKU: "2", Colour: "C2", Size: "S1" }
@@ -56,9 +57,35 @@ describe("writeJSONFile function", () => {
     const pathToJSON = `${__dirname}/../products.json`;
 
     await writeJSONFile(array);
-    const productData = readProductsJSON();
 
     expect(fs.existsSync(pathToJSON)).toBe(true);
+
+    const productData = readProductsJSON();
+
+    expect(productData[0]).toEqual({ SKU: "1", Colour: "C1", Size: "S1" });
+    expect(productData[1]).toEqual({ SKU: "2", Colour: "C2", Size: "S1" });
+  });
+});
+
+describe("importCSVIntoJSON", () => {
+  it("function writes a blank products.json file when receiving a blank CSV", async () => {
+    const blankFilePath = `${__dirname}/../blank.csv`;
+
+    await importCSVIntoJSON(blankFilePath);
+    expect(fs.existsSync(productsJSONPath)).toBe(true);
+
+    const productData = readProductsJSON();
+
+    expect(productData).toEqual([]);
+  });
+  it("function writes a products.json file when receiving a valid CSV", async () => {
+    const basicFilePath = `${__dirname}/../basic-data.csv`;
+
+    await importCSVIntoJSON(basicFilePath);
+    expect(fs.existsSync(productsJSONPath)).toBe(true);
+
+    const productData = readProductsJSON();
+
     expect(productData[0]).toEqual({ SKU: "1", Colour: "C1", Size: "S1" });
     expect(productData[1]).toEqual({ SKU: "2", Colour: "C2", Size: "S1" });
   });
