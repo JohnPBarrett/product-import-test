@@ -15,6 +15,19 @@ const readCSVFile = (filePath) => {
   });
 };
 
+const writeJSONFile = (products) => {
+  const path = "./products.json";
+  const stream = fs.createWriteStream(path);
+
+  return new Promise((resolve, reject) => {
+    stream.write(JSON.stringify(products));
+    stream.on("error", (err) => reject(err));
+    stream.end();
+    stream.on("finish", () => resolve());
+  });
+};
+
 module.exports = {
-  readCSVFile
+  readCSVFile,
+  writeJSONFile
 };
