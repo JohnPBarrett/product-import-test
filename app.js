@@ -38,11 +38,29 @@ const importCSVIntoJSON = async (csvFilePath) => {
   const products = await readCSVFile(csvFilePath, totals);
   await writeJSONFile(products);
   console.log(`Number of products created: ${totals.totalCreated}`);
+
   return;
+};
+
+const validateRow = (product) => {
+  if (product.SKU === "") {
+    console.log("product has been skipped as it is missing a SKU");
+    return false;
+  }
+  if (product.Colour === "") {
+    console.log("product has been skipped as it is missing a Colour");
+    return false;
+  }
+  if (product.Size === "") {
+    console.log("product has been skipped as it is missing a Size");
+    return false;
+  }
+  return true;
 };
 
 module.exports = {
   readCSVFile,
   writeJSONFile,
-  importCSVIntoJSON
+  importCSVIntoJSON,
+  validateRow
 };

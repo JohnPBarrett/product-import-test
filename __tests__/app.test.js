@@ -1,4 +1,9 @@
-const { readCSVFile, writeJSONFile, importCSVIntoJSON } = require("../app.js");
+const {
+  readCSVFile,
+  writeJSONFile,
+  importCSVIntoJSON,
+  validateRow
+} = require("../app.js");
 const fs = require("fs");
 
 const blankFilePath = `${__dirname}/../blank.csv`;
@@ -11,6 +16,8 @@ const readProductsJSON = () => {
 };
 
 afterEach(() => {
+  jest.clearAllMocks();
+
   if (fs.existsSync(productsJSONPath)) {
     // To clear out product.json file so each test is independent from another
     fs.unlinkSync(productsJSONPath);
@@ -85,21 +92,60 @@ describe("importCSVIntoJSON", () => {
   });
 });
 
-describe("console log for created products", () => {
-  it("console logs 0 when imported csvFile is blank", async () => {
-    const consoleLogMock = jest.spyOn(console, "log");
+describe("validateRow", () => {
+  it("when receiving a valid product it returns true", () => {
+    const product = { SKU: "1", Colour: "C1", Size: "S1" };
 
-    await importCSVIntoJSON(blankFilePath);
-    expect(consoleLogMock).toHaveBeenCalledWith(
-      "Number of products created: 0"
+    const result = validateRow(product);
+
+    expect(result).toBe(true);
+  });
+  it("when receiving a product missing a SKU it returns false and console logs the appropriate message", () => {
+    const product = { SKU: "", Colour: "C1", Size: "S1" };
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    const result = validateRow(product);
+
+    expect(result).toBe(false);
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "product has been skipped as it is missing a SKU"
     );
   });
+  it("when receiving a product missing a Colour it returns false and console logs the appropriate message", () => {
+    const product = { SKU: "1", Colour: "", Size: "S1" };
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    const result = validateRow(product);
+
+    expect(result).toBe(false);
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "product has been skipped as it is missing a Colour"
+    );
+  });
+  it("when receiving a product missing a Size it returns false and console logs the appropriate message", () => {
+    const product = { SKU: "1", Colour: "Colour", Size: "" };
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    const result = validateRow(product);
+
+    expect(result).toBe(false);
+    expect(consoleLogSpy).toHaveBeenCalledWith(
+      "product has been skipped as it is missing a Size"
+    );
+  });
+});
+
+describe("console log for created products", () => {
+  it("console logs 0 when imported csvFile is blank", async () => {
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    await importCSVIntoJSON(blankFilePath);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Number of products created: 0");
+  });
   it("console logs correctly when importing a csv file with valid data", async () => {
-    const consoleLogMock = jest.spyOn(console, "log");
+    const consoleLogSpy = jest.spyOn(console, "log");
 
     await importCSVIntoJSON(basicFilePath);
-    expect(consoleLogMock).toHaveBeenCalledWith(
-      "Number of products created: 3"
-    );
+    expect(consoleLogSpy).toHaveBeenCalledWith("Number of products created: 3");
   });
 });
