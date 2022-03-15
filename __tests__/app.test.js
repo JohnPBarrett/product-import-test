@@ -2,7 +2,8 @@ const {
   readCSVFile,
   writeJSONFile,
   importCSVIntoJSON,
-  validateRow
+  validateRow,
+  readProductJSONdata
 } = require("../app.js");
 const fs = require("fs");
 
@@ -12,7 +13,7 @@ const badBasicDataPath = `${__dirname}/../bad-basic-data.csv`;
 const mixedBasicDataPath = `${__dirname}/../mixed-basic-data.csv`;
 const productsJSONPath = `${__dirname}/../products.json`;
 
-const readProductsJSON = () => {
+const readProductsJSONTest = () => {
   const productData = fs.readFileSync(productsJSONPath, "utf-8");
   return JSON.parse(productData);
 };
@@ -53,7 +54,7 @@ describe("writeJSONFile function", () => {
 
     expect(fs.existsSync(pathToJSON)).toBe(true);
 
-    const productData = readProductsJSON();
+    const productData = readProductsJSONTest();
 
     expect(productData).toEqual([]);
   });
@@ -67,7 +68,7 @@ describe("writeJSONFile function", () => {
 
     expect(fs.existsSync(productsJSONPath)).toBe(true);
 
-    const productData = readProductsJSON();
+    const productData = readProductsJSONTest();
 
     expect(productData[0]).toEqual({ SKU: "1", Colour: "C1", Size: "S1" });
     expect(productData[1]).toEqual({ SKU: "2", Colour: "C2", Size: "S1" });
@@ -79,7 +80,7 @@ describe("importCSVIntoJSON", () => {
     await importCSVIntoJSON(blankFilePath);
     expect(fs.existsSync(productsJSONPath)).toBe(true);
 
-    const productData = readProductsJSON();
+    const productData = readProductsJSONTest();
 
     expect(productData).toEqual([]);
   });
@@ -87,7 +88,7 @@ describe("importCSVIntoJSON", () => {
     await importCSVIntoJSON(basicFilePath);
     expect(fs.existsSync(productsJSONPath)).toBe(true);
 
-    const productData = readProductsJSON();
+    const productData = readProductsJSONTest();
 
     expect(productData[0]).toEqual({ SKU: "1", Colour: "C1", Size: "S1" });
     expect(productData[1]).toEqual({ SKU: "2", Colour: "C2", Size: "S1" });
@@ -176,5 +177,24 @@ describe("console log for skipped products", () => {
 
     await importCSVIntoJSON(mixedBasicDataPath);
     expect(consoleLogSpy).toHaveBeenCalledWith("Number of rows skipped: 3");
+  });
+});
+
+describe("readProductJSONdata", () => {
+  it("function returns a blank array if products.json file does not exist", () => {
+    const result = readProductJSONdata();
+
+    expect(result).toEqual([]);
+  });
+  it("function a valid array of products when products.json file exists", () => {
+    const testData = [
+      { SKU: "1", Colour: "C1", Size: "S1" },
+      { SKU: "2", Colour: "C2", Size: "S1" }
+    ];
+    fs.writeFileSync(productsJSONPath, JSON.stringify(testData), "utf-8");
+    const results = readProductJSONdata();
+
+    expect(results[0]).toEqual({ SKU: "1", Colour: "C1", Size: "S1" });
+    expect(results[1]).toEqual({ SKU: "2", Colour: "C2", Size: "S1" });
   });
 });

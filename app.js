@@ -63,9 +63,20 @@ const validateRow = (product) => {
   return true;
 };
 
+const readProductJSONdata = () => {
+  const filePath = "./products.json";
+
+  if (fs.existsSync(filePath)) {
+    return JSON.parse(fs.readFileSync(filePath, "utf-8"));
+  }
+
+  return [];
+};
+
 module.exports = {
   readCSVFile,
   writeJSONFile,
   importCSVIntoJSON,
-  validateRow
+  validateRow,
+  readProductJSONdata
 };
