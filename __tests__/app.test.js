@@ -8,6 +8,8 @@ const fs = require("fs");
 
 const blankFilePath = `${__dirname}/../blank.csv`;
 const basicFilePath = `${__dirname}/../basic-data.csv`;
+const badBasicDataPath = `${__dirname}/../bad-basic-data.csv`;
+const mixedBasicDataPath = `${__dirname}/../mixed-basic-data.csv`;
 const productsJSONPath = `${__dirname}/../products.json`;
 
 const readProductsJSON = () => {
@@ -147,5 +149,32 @@ describe("console log for created products", () => {
 
     await importCSVIntoJSON(basicFilePath);
     expect(consoleLogSpy).toHaveBeenCalledWith("Number of products created: 3");
+  });
+});
+
+describe("console log for skipped products", () => {
+  it("console logs 0 when imported csvFile is blank", async () => {
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    await importCSVIntoJSON(blankFilePath);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Number of rows skipped: 0");
+  });
+  it("console logs 0 when imported csvFile is completely valid", async () => {
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    await importCSVIntoJSON(basicFilePath);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Number of rows skipped: 0");
+  });
+  it("console logs correctly when importing a csv file with all invalid data", async () => {
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    await importCSVIntoJSON(badBasicDataPath);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Number of rows skipped: 7");
+  });
+  it("console logs correctly when importing a csv file with a mix of bad and good data", async () => {
+    const consoleLogSpy = jest.spyOn(console, "log");
+
+    await importCSVIntoJSON(mixedBasicDataPath);
+    expect(consoleLogSpy).toHaveBeenCalledWith("Number of rows skipped: 3");
   });
 });

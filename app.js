@@ -9,8 +9,12 @@ const readCSVFile = (filePath, totals) => {
       .on("error", (err) => reject(err))
       .pipe(parser())
       .on("data", (product) => {
-        totals.totalCreated += 1;
-        products.push(product);
+        if (validateRow(product)) {
+          totals.totalCreated += 1;
+          products.push(product);
+        } else {
+          totals.totalSkipped += 1;
+        }
       })
       .on("end", () => {
         resolve(products);
@@ -32,13 +36,14 @@ const writeJSONFile = (products) => {
 
 const importCSVIntoJSON = async (csvFilePath) => {
   const totals = {
-    totalCreated: 0
+    totalCreated: 0,
+    totalSkipped: 0
   };
 
   const products = await readCSVFile(csvFilePath, totals);
   await writeJSONFile(products);
   console.log(`Number of products created: ${totals.totalCreated}`);
-
+  console.log(`Number of rows skipped: ${totals.totalSkipped}`);
   return;
 };
 
