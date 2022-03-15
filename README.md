@@ -24,8 +24,9 @@ Console log for unchanged needs to be created.
 
 A db store and api functionality would improve storage issues and would allow a user to query the data.
 
+Helper functions to be created for test file. As it stands there are a few test csv files that are in project directory. Would be preferable to make a helper function to create those csv files, use them within tests then tear down as needed. 
+
 ## Problems faced
 
 Have not had much recent practice with consuming CSV files and I believe this was the first time I've used CSV parser. There was an initial learning curve with getting to grips with it and making it do what I needed it to do. 
-
 
