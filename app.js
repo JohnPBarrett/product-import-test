@@ -1,14 +1,17 @@
 const fs = require("fs");
 const parser = require("csv-parser");
 
-const readCSVFile = (filePath) => {
+const readCSVFile = (filePath, totals) => {
   const products = [];
 
   return new Promise((resolve, reject) => {
     fs.createReadStream(filePath)
       .on("error", (err) => reject(err))
       .pipe(parser())
-      .on("data", (product) => products.push(product))
+      .on("data", (product) => {
+        totals.totalCreated += 1;
+        products.push(product);
+      })
       .on("end", () => {
         resolve(products);
       });
@@ -28,9 +31,14 @@ const writeJSONFile = (products) => {
 };
 
 const importCSVIntoJSON = async (csvFilePath) => {
-  const products = await readCSVFile(csvFilePath);
+  const totals = {
+    totalCreated: 0
+  };
 
-  return await writeJSONFile(products);
+  const products = await readCSVFile(csvFilePath, totals);
+  await writeJSONFile(products);
+  console.log(`Number of products created: ${totals.totalCreated}`);
+  return;
 };
 
 module.exports = {
