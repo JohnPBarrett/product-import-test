@@ -28,3 +28,4 @@ Helper functions to be created for test file. As it stands there are a few test 
 
 Have not had much recent practice with consuming CSV files and I believe this was the first time I've used CSV parser. There was an initial learning curve with getting to grips with it and making it do what I needed it to do. 
 
+Further, had some difficulty with getting streams to do what I need. Quite a few tests had problems where they wouldn't pass as the condition was to check whether file exists. The file did get created but at time of test it was not present so the test failed. Had to spend time to read more on stream docs to understand why this was occuring.  
