@@ -1,20 +1,27 @@
 {
   "name": "product-import-test",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A csv importer to JSON app",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node app.js",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JohnPBarrett/product-import-test.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "John Barrett",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/JohnPBarrett/product-import-test/issues"
   },
-  "homepage": "https://github.com/JohnPBarrett/product-import-test#readme"
+  "homepage": "https://github.com/JohnPBarrett/product-import-test#readme",
+  "dependencies": {
+    "csv-parser": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
 }
