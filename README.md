@@ -6,7 +6,7 @@
     cd product-import-test
     npm i
     
-To run test  once dependencies have been installed then please run npm test
+To run tests once dependencies have been installed then please run npm test
     
 ## What I have done
   
